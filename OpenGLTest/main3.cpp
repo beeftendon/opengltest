@@ -15,6 +15,28 @@ GLint snowman_display_list;
 int deltaMove = 0;
 float a = 0.0f;
 int b = 0;
+float nZ = -5;
+
+double PCFreq = 0.0;
+__int64 CounterStart = 0;
+void StartCounter()
+{
+	LARGE_INTEGER li;
+	if (!QueryPerformanceFrequency(&li))
+		cout << "QueryPerformanceFrequency failed!\n";
+
+	PCFreq = double(li.QuadPart) / 1000.0;
+
+	QueryPerformanceCounter(&li);
+	CounterStart = li.QuadPart;
+}
+double GetCounter()
+{
+	LARGE_INTEGER li;
+	QueryPerformanceCounter(&li);
+	return double(li.QuadPart - CounterStart) / PCFreq;
+}
+
 
 void changeSize(int w, int h)
 {
@@ -44,31 +66,59 @@ void renderScene(void)
 	float rx, ry, rz;
 	int i;
 	// THis is used to set Z position.
-	static float nZ = -10.0;
+	//static float nZ = -10.0;
 	glLoadIdentity();
 	gluLookAt(0.0f, 0.0f, nZ, 0.0f, 0.0f, 0.f, 0.0f, 1.0f, 0.0f);
 	glFlush();
 
 	// Next time Z position changes.
-	nZ -= 0.125;
+	//nZ -= 0.125;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glutWireCube(2.0f);
+
+	glBegin(GL_QUADS);
+	glVertex3f(-1.0f, 1.0f, 0.0f);              // Top Left
+	glVertex3f(1.0f, 1.0f, 0.0f);              // Top Right
+	glVertex3f(1.0f, -1.0f, 0.0f);              // Bottom Right
+	glVertex3f(-1.0f, -1.0f, 0.0f);              // Bottom Left
+	glEnd();                            // Done Drawing The Quad
+
 	glutPostRedisplay();
 	glutSwapBuffers();
+
+	return;
 }
 
+void mouse(int button, int state, int x, int y)
+{
+	if (state == GLUT_DOWN)
+	{
+		nZ -= 1;
+	}
+	glutPostRedisplay();
+}
 
 int main(int argc, char **argv)
 {
+	double loop_timer = 0;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(640, 360);
 	glutCreateWindow("My animation");
 	glutDisplayFunc(renderScene);
+	glutMouseFunc(mouse);
 	glutReshapeFunc(changeSize);
 
-	glutMainLoop();
+	StartCounter();
+	while (true)
+	{
+		while (GetCounter() < 8.0);
+		loop_timer = GetCounter();
+		glutMainLoopEvent();
+		cout << GetCounter() - loop_timer << "\n";
+
+		StartCounter();
+	}
 
 	return(0);
 }
