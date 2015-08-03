@@ -6,6 +6,7 @@
 #include <time.h>
 #include <dos.h>
 #include <windows.h>
+#include "stimulus.h"
 using namespace std;
 
 float angle = 0.0, deltaAngle = 0.0, ratio;
@@ -105,19 +106,20 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(640, 360);
 	glutCreateWindow("My animation");
-	glutDisplayFunc(renderScene);
+	glutDisplayFunc(drawCylinderBarsES);
 	glutMouseFunc(mouse);
 	glutReshapeFunc(changeSize);
 
 	StartCounter();
 	while (true)
 	{
-		while (GetCounter() < 8.0);
 		loop_timer = GetCounter();
+		while (GetCounter() - loop_timer < 16.0)
+		{
+		};
+		tc = GetCounter();
 		glutMainLoopEvent();
-		cout << GetCounter() - loop_timer << "\n";
 
-		StartCounter();
 	}
 
 	return(0);
