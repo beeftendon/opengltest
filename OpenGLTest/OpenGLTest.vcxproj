@@ -84,12 +84,10 @@
     </ClCompile>
     <ClCompile Include="main3.cpp" />
     <ClCompile Include="Shader_Loader.cpp" />
-    <ClCompile Include="stimulus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameModels.h" />
     <ClInclude Include="Shader_Loader.h" />
-    <ClInclude Include="stimulus.h" />
     <ClInclude Include="VertexFormat.h" />
   </ItemGroup>
   <ItemGroup>
